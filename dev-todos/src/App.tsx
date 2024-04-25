@@ -1,17 +1,35 @@
-import React from "react";
+import React, {useState} from "react";
 import "./App.css";
 import Header from "./components/Header";
 import Form from "./components/Form";
-import Todos from "./components/Todos";
-import Footer from "./components/Footer";
+import List from "./components/List";
+import {Stats} from "./components/Stats";
+import {ListItemData} from "./interfaces/ListItemData";
+
 
 function App() {
+  const [items, setItem] = useState<ListItemData[]>([]);
+
+  function handleSetItem(item: ListItemData) {
+    setItem((items: ListItemData[]) => [...items, item])
+  }
+
+  function handleDeleteItem(id: number) {
+    setItem((items)=> items.filter(item => item.id !== id))
+  }
+
+  function handleCheckItem(id: number) {
+    setItem(items =>
+      items.map((item)=>
+      item.id === id ? {...item, packed: !item.packed} : item))
+  }
+
   return (
     <div className="app">
       <Header />
-      <Form />
-      <Todos />
-      <Footer />
+      <Form onAddItem={handleSetItem}/>
+      <List items={items} onDeleteItem={handleDeleteItem} onCheckItem={handleCheckItem} />
+      <Stats items={items} />
     </div>
   );
 }

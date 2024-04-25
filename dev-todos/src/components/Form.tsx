@@ -1,15 +1,19 @@
 import React, { useState } from "react";
+import {ListItemData} from "../interfaces/ListItemData";
 
-function Form() {
+interface FormProps {
+  onAddItem: (el: ListItemData) => void;
+}
+
+const Form: React.FC<FormProps> = ({ onAddItem }) => {
   const [description, setDescription] = useState("");
   const [quantity, setQuantity] = useState(1);
 
   function handleSubmit(e: React.FormEvent) {
-    if (!description) {
-      return;
-    }
-    e.preventDefault();
-    const newTodo = { description, quantity, packed: false, id: Date.now() };
+    if (!description) return;
+    const newItem = {description, quantity, packed: false, id: Date.now()}
+    onAddItem(newItem)
+    e.preventDefault()
     setDescription("");
     setQuantity(1);
   }
@@ -34,7 +38,7 @@ function Form() {
         value={description}
         onChange={(e) => setDescription(e.target.value)}
       />
-      <button>push</button>
+      <button>Add</button>
     </form>
   );
 }
