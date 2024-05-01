@@ -3,7 +3,7 @@ import "./App.css";
 import Header from "./components/Header";
 import Form from "./components/Form";
 import List from "./components/List";
-import {Stats} from "./components/Stats";
+import Stats from "./components/Stats";
 import {ListItemData} from "./interfaces/ListItemData";
 
 
@@ -24,11 +24,16 @@ function App() {
       item.id === id ? {...item, packed: !item.packed} : item))
   }
 
+  function handleClearList() {
+    if (window.confirm("Are you sure you want to clear the list?"))
+    setItem([]);
+  }
+
   return (
     <div className="app">
       <Header />
       <Form onAddItem={handleSetItem}/>
-      <List items={items} onDeleteItem={handleDeleteItem} onCheckItem={handleCheckItem} />
+      <List items={items} onDeleteItem={handleDeleteItem} onCheckItem={handleCheckItem} onClearList={handleClearList}/>
       <Stats items={items} />
     </div>
   );
