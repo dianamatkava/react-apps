@@ -65,10 +65,11 @@
 .form {
   background-color: #e9ecee;
   padding-bottom: 70px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.267);
 }
 
 .form:hover {
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.267);
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.367);
 }
 
 /* .form > h3 {
