@@ -5,13 +5,16 @@ interface FormProps {
 }
 
 const Form: React.FC<FormProps> = ({ title, children }) => {
+  function foo() {
+    console.log();
+  }
   return (
     <>
       <div className="content-block form">
         <h3>{title}</h3>
         {children}
         <div className="float-right">
-          <Button name="Submit" />
+          <Button color={"black"} name="Submit" handleOnClick={() => foo} />
         </div>
       </div>
     </>

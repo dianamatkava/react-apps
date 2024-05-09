@@ -2,12 +2,17 @@ import React from "react";
 
 interface ButtonProps {
   name: string;
-  onSubmit: () => void;
+  color: string | null;
+  handleOnClick: () => void;
 }
 
-const Button: React.FC<ButtonProps> = ({ name, onSubmit }) => {
+const Button: React.FC<ButtonProps> = ({
+  name,
+  handleOnClick,
+  color = "white",
+}) => {
   return (
-    <button className="button" onClick={onSubmit}>
+    <button className={`button ${color}`} onClick={handleOnClick}>
       {name}
     </button>
   );

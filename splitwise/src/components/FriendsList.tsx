@@ -1,6 +1,6 @@
 import React from "react";
 import Friend from "./Friend";
-import Button from "./units/Button";
+import FriendModel from "../interfaces/FirendModels";
 
 const friendList = [
   {
@@ -24,21 +24,23 @@ const friendList = [
 ];
 
 interface FriendsListProps {
-  handleFormHidden: (val: boolean) => void;
+  setSelectFriend: (el: FriendModel) => void;
+  selectedFriend: FriendModel | null;
 }
 
-const FriendsList: React.FC<FriendsListProps> = ({ handleFormHidden }) => {
+const FriendsList: React.FC<FriendsListProps> = ({
+  setSelectFriend,
+  selectedFriend,
+}) => {
   return (
     <>
       <div className="content-block">
         {friendList.map((el) => (
           <Friend
             key={el.id}
-            id={el.id}
-            name={el.name}
-            status={el.status}
-            img={el.img}
-            handleFormHidden={handleFormHidden}
+            el={el}
+            setSelectFriend={(el: FriendModel) => setSelectFriend(el)}
+            selectedFriend={selectedFriend}
           />
         ))}
         {/* <div className="float-right">
