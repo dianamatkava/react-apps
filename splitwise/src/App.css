@@ -58,6 +58,14 @@
   margin: 100px auto;
 }
 
+.content-small-block {
+  margin: 5px;
+  padding: 5px 15px;
+  border-radius: 10px;
+  width: 250px;
+  margin-left: 30px;
+}
+
 .center-block > .collumns > .row {
   width: 100%;
 }

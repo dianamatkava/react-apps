@@ -1,10 +1,11 @@
 import React from "react";
+import { useState } from "react";
 import Form from "./units/Form";
 import Input from "./units/Input";
 import FriendModel from "../interfaces/FirendModels";
 
 interface BillFormProps {
-  selectedFriend: FriendModel | null;
+  selectedFriend: FriendModel;
   updateFriendStatus: (id: number, status: string) => void;
 }
 
@@ -12,6 +13,9 @@ const BillForm: React.FC<BillFormProps> = ({
   selectedFriend,
   updateFriendStatus,
 }) => {
+  const [myExpence, setMyExpence] = useState(0);
+  const [totalExpence, setTotalExpence] = useState(0);
+
   function submitBillForm(event: React.FormEvent<Element>) {
     event.preventDefault();
     const target = event.target as HTMLFormElement;
@@ -21,31 +25,44 @@ const BillForm: React.FC<BillFormProps> = ({
     const theirsBillInput = target.elements.namedItem(
       "theirsExpence"
     ) as HTMLInputElement;
-    console.log(myBillInput.value);
-    console.log(theirsBillInput.value);
+    const splitBill =
+      Number(myBillInput.value) + Number(theirsBillInput.value) / 2;
+    updateFriendStatus(selectedFriend?.id, `${splitBill}`);
   }
   return (
-    <Form
-      title={`SPLIT THE BILL WITH ${selectedFriend?.name.toUpperCase()}`}
-      onSubmit={(event) => submitBillForm(event)}
-    >
-      <>
-        <Input emogi="👸" label="My expence" type="text" name="myExpence" />
-        <Input
-          emogi="👫"
-          label={`${selectedFriend?.name}'s expence`}
-          type="text"
-          name="theirsExpence"
-        />
-        <Input
-          emogi="💰"
-          label="Bill value"
-          type="text"
-          name="total"
-          readOnly={true}
-        />
-      </>
-    </Form>
+    <div className="content-block form" style={{ width: "250px" }}>
+      <Form
+        title={`SPLIT THE BILL WITH ${selectedFriend?.name.toUpperCase()}`}
+        onSubmit={(event) => submitBillForm(event)}
+      >
+        <>
+          <Input
+            emogi="👫"
+            label="Bill value"
+            type="text"
+            value={totalExpence}
+            setValue={(el) => setTotalExpence(Number(el))}
+            name="totalExpence"
+          />
+          <Input
+            emogi="👸"
+            label="My expence"
+            type="text"
+            name="myExpence"
+            value={myExpence}
+            setValue={(el) => setMyExpence(Number(el))}
+          />
+          <Input
+            emogi="💰"
+            label={`${selectedFriend?.name}'s expence`}
+            type="text"
+            name="theirExpence"
+            readOnly={true}
+            placeholder={totalExpence - myExpence}
+          />
+        </>
+      </Form>
+    </div>
   );
 };
 

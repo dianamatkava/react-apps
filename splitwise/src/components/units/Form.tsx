@@ -12,7 +12,7 @@ const Form: React.FC<FormProps> = ({ title, children, onSubmit }) => {
   }
   return (
     <>
-      <form className="content-block form" onSubmit={onSubmit}>
+      <form onSubmit={onSubmit}>
         <h3>{title}</h3>
         {children}
         <div className="float-right">

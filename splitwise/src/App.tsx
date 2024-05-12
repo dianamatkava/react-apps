@@ -2,8 +2,6 @@ import React from "react";
 import { useState } from "react";
 import "./App.css";
 import FriendsList from "./components/FriendsList";
-import Form from "./components/units/Form";
-import Input from "./components/units/Input";
 import FriendModel from "./interfaces/FirendModels";
 import BillForm from "./components/BillForm";
 
@@ -11,19 +9,19 @@ const friends: FriendModel[] = [
   {
     id: 1,
     name: "John",
-    status: "You and John are even",
+    balance: 0,
     img: "user.png",
   },
   {
     id: 2,
     name: "Mark",
-    status: "You and Mark are even",
+    balance: 0,
     img: "user.png",
   },
   {
     id: 3,
     name: "Eric",
-    status: "You and Eric are even",
+    balance: 0,
     img: "user.png",
   },
 ];
@@ -57,12 +55,17 @@ function App() {
             createFriend={(el: FriendModel) => createFriend(el)}
           />
         </div>
-        <div className={`${selectedFriend ? "" : "hidden"} "row"`}>
-          <BillForm
-            selectedFriend={selectedFriend}
-            updateFriendStatus={(id, status) => updateFriendStatus(id, status)}
-          />
-        </div>
+
+        {selectedFriend && (
+          <div className="row">
+            <BillForm
+              selectedFriend={selectedFriend}
+              updateFriendStatus={(id, status) =>
+                updateFriendStatus(id, status)
+              }
+            />
+          </div>
+        )}
       </div>
     </div>
   );

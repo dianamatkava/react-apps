@@ -1,6 +1,6 @@
 export default interface FriendModel {
   id: number;
   name: string;
-  status: string;
+  balance: number;
   img: string;
 }

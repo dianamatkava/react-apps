@@ -1,6 +1,9 @@
 import React from "react";
+import { useState } from "react";
 import Friend from "./Friend";
 import FriendModel from "../interfaces/FirendModels";
+import Button from "./units/Button";
+import AddFriend from "./AddFriend";
 
 interface FriendsListProps {
   friendList: FriendModel[];
@@ -15,6 +18,7 @@ const FriendsList: React.FC<FriendsListProps> = ({
   setSelectFriend,
   selectedFriend,
 }) => {
+  const [formOpen, setForOpen] = useState(false);
   return (
     <>
       <div className="content-block">
@@ -26,9 +30,26 @@ const FriendsList: React.FC<FriendsListProps> = ({
             selectedFriend={selectedFriend}
           />
         ))}
-        {/* <div className="float-right">
-          <Button name="Colse" />
-        </div> */}
+        {formOpen ? (
+          <>
+            <AddFriend />
+            <div className="float-right">
+              <Button
+                name="Close"
+                color={"white"}
+                handleOnClick={() => setForOpen((el) => !el)}
+              />
+            </div>
+          </>
+        ) : (
+          <div className="float-right">
+            <Button
+              name="Add Friend"
+              color={"black"}
+              handleOnClick={() => setForOpen((el) => !el)}
+            />
+          </div>
+        )}
       </div>
     </>
   );

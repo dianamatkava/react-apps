@@ -2,7 +2,7 @@ import React from "react";
 
 interface ButtonProps {
   name: string;
-  color: string | null;
+  color?: string | null;
   handleOnClick: () => void;
 }
 

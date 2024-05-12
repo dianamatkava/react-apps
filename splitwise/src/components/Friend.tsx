@@ -18,7 +18,21 @@ const Friend: React.FC<FriendsProps> = ({
       <img src={el.img} alt="Friend pic" className="friend-img" />
       <div className="friend-info">
         <h5>{el.name}</h5>
-        <p>{el.status}</p>
+        <p>
+          {el.balance === 0 ? (
+            <span
+              style={{ color: "grey" }}
+            >{`You and ${el.name} are enev`}</span>
+          ) : el.balance > 0 ? (
+            <span style={{ color: "red" }}>
+              {`You owe to ${el.name} ${Math.abs(el.balance)}$`}
+            </span>
+          ) : (
+            <span style={{ color: "green" }}>
+              {`${el.name} ows you ${el.balance}$`}
+            </span>
+          )}
+        </p>
       </div>
       <Button
         name="Select"
