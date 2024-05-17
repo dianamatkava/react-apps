@@ -3,41 +3,44 @@ import Button from "./units/Button";
 import FriendModel from "../interfaces/FirendModels";
 
 interface FriendsProps {
-  el: FriendModel;
+  friend: FriendModel;
   setSelectFriend: (el: FriendModel) => void;
   selectedFriend: FriendModel | null;
 }
 
 const Friend: React.FC<FriendsProps> = ({
-  el,
+  friend,
   selectedFriend,
   setSelectFriend,
 }) => {
+  const isSelectedFriend = selectedFriend?.id === friend.id;
   return (
-    <div className="collumns">
-      <img src={el.img} alt="Friend pic" className="friend-img" />
+    <div
+      className={`collumns coll ${isSelectedFriend ? "selected-block" : ""}`}
+    >
+      <img src={friend.img} alt="Friend pic" className="friend-img" />
       <div className="friend-info">
-        <h5>{el.name}</h5>
+        <h5>{friend.name}</h5>
         <p>
-          {el.balance === 0 ? (
+          {friend.balance === 0 ? (
             <span
               style={{ color: "grey" }}
-            >{`You and ${el.name} are enev`}</span>
-          ) : el.balance > 0 ? (
+            >{`You and ${friend.name} are even`}</span>
+          ) : friend.balance > 0 ? (
             <span style={{ color: "red" }}>
-              {`You owe to ${el.name} ${Math.abs(el.balance)}$`}
+              {`You owe to ${friend.name} ${Math.abs(friend.balance)}$`}
             </span>
           ) : (
             <span style={{ color: "green" }}>
-              {`${el.name} ows you ${el.balance}$`}
+              {`${friend.name} owes you ${Math.abs(friend.balance)}$`}
             </span>
           )}
         </p>
       </div>
       <Button
-        name="Select"
-        color={`${selectedFriend?.id === el.id ? "black" : "white"}`}
-        handleOnClick={() => setSelectFriend(el)}
+        name={`${isSelectedFriend ? "Close" : "Select"}`}
+        color={`${isSelectedFriend ? "black" : "white"}`}
+        handleOnClick={() => setSelectFriend(friend)}
       />
     </div>
   );

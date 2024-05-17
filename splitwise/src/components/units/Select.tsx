@@ -1,18 +1,16 @@
-import React from "react";
+import React, { Children } from "react";
 
 interface SelectProps {
-  emogi: string;
   label: string;
-  type: string;
+  children: JSX.Element;
+  onChange: (el: string) => void;
 }
 
-const Select: React.FC<SelectProps> = ({ emogi, label, type }) => {
+const Select: React.FC<SelectProps> = ({ label, children, onChange }) => {
   return (
     <div className="collumns input">
-      <label htmlFor="">
-        <span>{emogi}</span> {label}
-      </label>
-      <input type={type} />
+      <label>{label}</label>
+      <select onChange={(el) => onChange(el.target.value)}>{children}</select>
     </div>
   );
 };

@@ -30,18 +30,26 @@ function App() {
   const [selectedFriend, setSelectedFriend] = useState<FriendModel | null>(
     null
   );
-  const [friendList, updateFriend] = useState<FriendModel[]>(friends);
+  const [friendList, updateFriendList] = useState<FriendModel[]>(friends);
 
-  function updateFriendStatus(id: number, status: string) {
-    updateFriend((prevFriendList) =>
+  function updateFriendBalance(id: number, balance: number) {
+    updateFriendList((prevFriendList) =>
       prevFriendList.map((friend) =>
-        friend.id === id ? { ...friend, status: status } : friend
+        friend.id === id
+          ? { ...friend, balance: friend.balance + balance }
+          : friend
       )
     );
   }
 
   function createFriend(el: FriendModel) {
-    console.log();
+    updateFriendList((friends) => [...friends, el]);
+  }
+
+  function setSelectedFriend1(el: FriendModel) {
+    setSelectedFriend((selectedFriend) =>
+      el.id === selectedFriend?.id ? null : el
+    );
   }
 
   return (
@@ -49,7 +57,7 @@ function App() {
       <div className="collumns">
         <div className="row">
           <FriendsList
-            setSelectFriend={(el: FriendModel) => setSelectedFriend(el)}
+            setSelectFriend={(el: FriendModel) => setSelectedFriend1(el)}
             selectedFriend={selectedFriend}
             friendList={friendList}
             createFriend={(el: FriendModel) => createFriend(el)}
@@ -60,9 +68,8 @@ function App() {
           <div className="row">
             <BillForm
               selectedFriend={selectedFriend}
-              updateFriendStatus={(id, status) =>
-                updateFriendStatus(id, status)
-              }
+              setSelectedFriend={(el) => setSelectedFriend(el)}
+              updateFriend={(id, balance) => updateFriendBalance(id, balance)}
             />
           </div>
         )}

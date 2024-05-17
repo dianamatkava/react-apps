@@ -32,7 +32,7 @@ const Input: React.FC<InputProps> = ({
         type={type}
         name={name}
         required={isRequired ? true : false}
-        value={value ? value : ""}
+        value={value ? value : null}
         onChange={(el) => (setValue ? setValue(el.target.value) : null)}
         placeholder={placeholder ? placeholder : ""}
         readOnly={readOnly === true ? true : false}

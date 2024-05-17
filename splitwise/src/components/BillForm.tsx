@@ -3,34 +3,35 @@ import { useState } from "react";
 import Form from "./units/Form";
 import Input from "./units/Input";
 import FriendModel from "../interfaces/FirendModels";
+import Select from "./units/Select";
 
 interface BillFormProps {
   selectedFriend: FriendModel;
-  updateFriendStatus: (id: number, status: string) => void;
+  setSelectedFriend: (el: FriendModel | null) => void;
+  updateFriend: (id: number, balance: number) => void;
 }
 
 const BillForm: React.FC<BillFormProps> = ({
   selectedFriend,
-  updateFriendStatus,
+  setSelectedFriend,
+  updateFriend,
 }) => {
   const [myExpence, setMyExpence] = useState(0);
   const [totalExpence, setTotalExpence] = useState(0);
+  const friendExpence = totalExpence ? totalExpence - myExpence : 0;
+  const [payer, setPayer] = useState("me");
 
   function submitBillForm(event: React.FormEvent<Element>) {
     event.preventDefault();
-    const target = event.target as HTMLFormElement;
-    const myBillInput = target.elements.namedItem(
-      "myExpence"
-    ) as HTMLInputElement;
-    const theirsBillInput = target.elements.namedItem(
-      "theirsExpence"
-    ) as HTMLInputElement;
-    const splitBill =
-      Number(myBillInput.value) + Number(theirsBillInput.value) / 2;
-    updateFriendStatus(selectedFriend?.id, `${splitBill}`);
+    if (!myExpence || !totalExpence) return;
+    updateFriend(
+      selectedFriend.id,
+      payer === "me" ? -friendExpence : friendExpence
+    );
+    setSelectedFriend(null);
   }
   return (
-    <div className="content-block form" style={{ width: "250px" }}>
+    <div className="content-block form" style={{ width: "300px" }}>
       <Form
         title={`SPLIT THE BILL WITH ${selectedFriend?.name.toUpperCase()}`}
         onSubmit={(event) => submitBillForm(event)}
@@ -50,7 +51,11 @@ const BillForm: React.FC<BillFormProps> = ({
             type="text"
             name="myExpence"
             value={myExpence}
-            setValue={(el) => setMyExpence(Number(el))}
+            setValue={(el) =>
+              Number(el) <= totalExpence
+                ? setMyExpence(Number(el))
+                : totalExpence
+            }
           />
           <Input
             emogi="💰"
@@ -58,8 +63,14 @@ const BillForm: React.FC<BillFormProps> = ({
             type="text"
             name="theirExpence"
             readOnly={true}
-            placeholder={totalExpence - myExpence}
+            placeholder={friendExpence}
           />
+          <Select label="Who paid the bill?" onChange={(el) => setPayer(el)}>
+            <>
+              <option value="me">Me</option>
+              <option value="them">{selectedFriend.name}</option>
+            </>
+          </Select>
         </>
       </Form>
     </div>

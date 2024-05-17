@@ -18,26 +18,32 @@ const FriendsList: React.FC<FriendsListProps> = ({
   setSelectFriend,
   selectedFriend,
 }) => {
-  const [formOpen, setForOpen] = useState(false);
+  const [addFormOpen, setAddFormOpen] = useState(false);
+
+  function addFriend(el: FriendModel) {
+    createFriend(el);
+    setAddFormOpen(false);
+  }
+
   return (
     <>
       <div className="content-block">
-        {friendList.map((el) => (
+        {friendList.map((friend) => (
           <Friend
-            key={el.id}
-            el={el}
-            setSelectFriend={(el: FriendModel) => setSelectFriend(el)}
+            key={friend.id}
+            friend={friend}
+            setSelectFriend={(friend: FriendModel) => setSelectFriend(friend)}
             selectedFriend={selectedFriend}
           />
         ))}
-        {formOpen ? (
+        {addFormOpen ? (
           <>
-            <AddFriend />
+            <AddFriend onAddFriend={(el) => addFriend(el)} />
             <div className="float-right">
               <Button
                 name="Close"
                 color={"white"}
-                handleOnClick={() => setForOpen((el) => !el)}
+                handleOnClick={() => setAddFormOpen((el) => !el)}
               />
             </div>
           </>
@@ -46,7 +52,7 @@ const FriendsList: React.FC<FriendsListProps> = ({
             <Button
               name="Add Friend"
               color={"black"}
-              handleOnClick={() => setForOpen((el) => !el)}
+              handleOnClick={() => setAddFormOpen((el) => !el)}
             />
           </div>
         )}
