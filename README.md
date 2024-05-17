@@ -6,7 +6,7 @@ This repository contains several pet-projects built to learn and practice React 
 
 The Splitwise App is designed to help users split bills with friends. This application showcases advanced usage of React's useState and demonstrates form handling in a dynamic and interactive manner.
 
-### Features
+#### Features
 
 - Bill Splitting Form: Allows users to input bill details and split the expense with selected friends.
 - Add Friend Form: Users can add friends to split the bill with.
