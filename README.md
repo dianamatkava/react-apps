@@ -12,10 +12,7 @@ The Splitwise App is designed to help users split bills with friends. This appli
 - Add Friend Form: Users can add friends to split the bill with.
 - Dynamic Form Handling: Forms are created and managed dynamically using React components.
 
-<video width="600" controls>
-  <source src="./assets/splitwise.mov" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+![Splitwise Preview](./assets/splitwise.gif)
 
 ## Packing List App
 
@@ -29,6 +26,8 @@ A todo-like app designed for creating packing lists for upcoming travels. Featur
 A component designed to manage forms with multiple steps. Features include:
 
 - Management of form state using useState
+
+![Steps Component Preview](./assets/steps.gif)
 
 ## Pizza Menu
 
