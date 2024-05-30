@@ -12,7 +12,7 @@ root.render(
     {
       /* <App /> */
       <>
-        <StarRating maxStarts={5} />
+        <StarRating maxStarts={5} setRating={() => {}} />
       </>
     }
   </React.StrictMode>
