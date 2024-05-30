@@ -21,6 +21,13 @@ A todo-like app designed for creating packing lists for upcoming travels. Featur
 - Usage of children and forwarding state
 - UI for adding items to the packing list
 
+## FAQ Accordion Component
+
+- Management of form state using useState
+- Component Composition
+
+![Splitwise Preview](./assets/faq.gif)
+
 ## Steps Component
 
 A component designed to manage forms with multiple steps. Features include:
