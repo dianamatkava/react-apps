@@ -9,7 +9,9 @@ import Search from "./components/utils/Search";
 import BoxContainer from "./components/utils/BoxContainer";
 import SearchResults from "./components/header/SearchResults";
 import WatchedSummary from "./components/movies/WatchedSummary";
-import { MovieModel } from "./interfaces/Movie";
+import {MovieModel, WatchedMovieModel} from "./interfaces/Movie";
+import Loader from "./components/utils/Loader";
+import ErrorMessage from "./components/utils/ErrorMessage";
 import MovieInfo from "./components/movies/MovieInfo";
 
 const tempMovieData = [
@@ -36,7 +38,7 @@ const tempMovieData = [
   },
 ];
 
-const tempWatchedData = [
+const tempWatchedData: WatchedMovieModel[] = [
   {
     imdbID: "tt1375666",
     Title: "Inception",
@@ -59,31 +61,11 @@ const tempWatchedData = [
   },
 ];
 
-const API_KEY = "e6b9a25e";
 
 interface IMDBSearchResult {
   Search: MovieModel[];
 }
 
-function Loader() {
-  return (
-    <div className="loader">
-      <div className="loader-inner ball-pulse">
-        <p>Loading ... </p>
-      </div>
-    </div>
-  );
-}
-
-function ErrorMessage({ message }: { message: string }) {
-  return (
-    <div className="error">
-      <div className="loader-inner ball-pulse">
-        <p>ERROR: {message} </p>
-      </div>
-    </div>
-  );
-}
 
 export default function App() {
   const [movies, setMovies] = useState(tempMovieData);
@@ -91,6 +73,14 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>();
   const [selectedMovie, setSelectedMovie] = useState<string | null>(null);
+
+  function handleAddWatchedMovie(movie: WatchedMovieModel) {
+    setWatched((watchedMovies) => watchedMovies.concat(movie));
+  }
+
+  function handleRemoveWatchedMovie(movieId: string) {
+    setWatched((watchedMovies) => watchedMovies.filter((movie) => movie.imdbID !== movieId));
+  }
 
   useEffect(() => {
     async function fetchMovies() {
@@ -138,7 +128,6 @@ export default function App() {
       </Header>
       <Main>
         <>
-          <p>selectedMovie {selectedMovie}</p>
           <BoxContainer>
             <>
               {isLoading && <Loader />}
@@ -154,11 +143,14 @@ export default function App() {
               <MovieInfo
                 movieId={selectedMovie}
                 onCloseSelectedMovie={onCloseSelectedMovie}
+                onAddWatched={handleAddWatchedMovie}
+                onRemoveWatched={handleRemoveWatchedMovie}
+                watchedMovies={watched}
               />
             ) : (
               <>
                 <WatchedSummary watched={watched} />
-                <WatchedMoviesList watched={watched}></WatchedMoviesList>
+                <WatchedMoviesList watched={watched} onRemoveWatched={handleRemoveWatchedMovie}></WatchedMoviesList>
               </>
             )}
           </BoxContainer>

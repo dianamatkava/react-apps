@@ -1,46 +1,96 @@
 import React, { useEffect, useState } from "react";
-import { MovieModel, MovieInfoModel } from "../../interfaces/Movie";
+import {MovieInfoModel, WatchedMovieModel} from "../../interfaces/Movie";
 import StarRating from "../rating/StarRating";
+import Loader from "../utils/Loader";
+
 
 interface MovieInfoProps {
   movieId: string;
+  watchedMovies: WatchedMovieModel[];
   onCloseSelectedMovie: () => void;
+  onAddWatched: (movie: WatchedMovieModel) => void;
+  onRemoveWatched: (movieId: string) => void;
 }
 
 const MovieInfo: React.FC<MovieInfoProps> = ({
   movieId,
   onCloseSelectedMovie,
+  onAddWatched,
+  onRemoveWatched,
+  watchedMovies,
 }) => {
   const [movie, setMovie] = useState<MovieInfoModel | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [userRating, setUserRating] = useState<number|null>(null);
+  const isWatched = watchedMovies.map(movie=> movie.imdbID).includes(movieId)
 
   useEffect(() => {
     async function getMovieInfo(movieId: string) {
+      setIsLoading(true);
+
       const res = await fetch(
         `http://www.omdbapi.com/?apikey=e6b9a25e&i=${movieId}`
       );
       if (!res.ok) {
         throw new Error("Fetching movie failed");
       }
-      const data: MovieModel = await res.json();
+      const data: MovieInfoModel = await res.json();
       setMovie(data);
-      console.log(data);
+
+     const watchedMovie = watchedMovies.filter((movie) => movie.imdbID === movieId).at(0);
+     setUserRating(watchedMovie?.userRating || null);
+
+     setIsLoading(false);
     }
     getMovieInfo(movieId);
-  }, []);
+  }, [movieId]);
+
+  function onAddMovie() {
+    console.log(movie)
+    if (!movie) {
+      return;
+    }
+    const newWatchedMovie: WatchedMovieModel = {
+      imdbID: movieId,
+      Poster: movie.Poster,
+      Title: movie.Title,
+      Year: movie.Year,
+      imdbRating: Number(movie.imdbRating),
+      userRating: userRating,
+      runtime: Number(movie.Runtime.split(' ').at(0)),
+    };
+
+    onAddWatched(newWatchedMovie);
+    onCloseSelectedMovie();
+  }
+
+  function onRemoveMovie() {
+    onRemoveWatched(movieId);
+    onCloseSelectedMovie();
+  }
+
+
+  if (!movie) {
+    return null;
+  }
+
+  if (isLoading) {
+    return <Loader/>;
+  }
 
   return (
     <div className="details">
       <header>
         <button></button>
-        <img src={movie?.Poster} alt="Poster" />
+        <img src={movie.Poster} alt={`Poster of ${movie.Title}`} />
         <div className="details-overview">
-          <h2>{movie?.Title}</h2>
+          <h2>{movie.Title}</h2>
           <p>
-            {movie?.released} &bull; {movie?.runtime}
+            {movie.Released} &bull; {movie.Runtime}
           </p>
-          <p>{movie?.genre}</p>
+          <p>{movie.Genre}</p>
           <p>
-            <span>⭐️</span> IMDB Rating: {movie?.imdbRating}
+            <span>⭐️</span> IMDB Rating: {movie.imdbRating}
           </p>
         </div>
       </header>
@@ -48,17 +98,23 @@ const MovieInfo: React.FC<MovieInfoProps> = ({
       <section>
         <div className="rating">
           <StarRating
-            setRating={() => 1}
+            setRating={setUserRating}
             maxStarts={10}
             color="yellow"
             size={28}
+            userRating={userRating}
           />
+          {isWatched ?
+            <button className='btn-remove' onClick={onRemoveMovie}>- Remove from Watchlist</button> :
+            <button className='btn-add' onClick={onAddMovie}>+ Add to Watchlist</button>
+          }
+
         </div>
         <p>
-          <em>{movie?.plot}</em>
+          <em>{movie.Plot}</em>
         </p>
-        <p>Starring {movie?.actors}</p>
-        <p>Director: {movie?.director}</p>
+        <p>Starring: {movie.Actors}</p>
+        <p>Directed by: {movie.Director}</p>
       </section>
 
       <button className="btn-back" onClick={onCloseSelectedMovie}>

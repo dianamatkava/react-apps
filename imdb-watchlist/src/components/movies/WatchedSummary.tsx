@@ -1,17 +1,21 @@
 import React from "react";
-import { Watched } from "../../interfaces/Movie";
+import { WatchedMovieModel } from "../../interfaces/Movie";
 
 interface SummaryProps {
-  watched: Watched[];
+  watched: WatchedMovieModel[];
 }
 
 const WatchedSummary: React.FC<SummaryProps> = ({ watched }) => {
   const average = (arr: number[]) =>
     arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
-  const avgImdbRating = average(watched.map((movie) => movie.imdbRating));
-  const avgUserRating = average(watched.map((movie) => movie.userRating));
-  const avgRuntime = average(watched.map((movie) => movie.runtime));
+  const avgImdbRating = average(watched.map((movie) => movie.imdbRating)).toFixed(2);
+  const avgUserRating = average(
+    watched
+      .filter((movie) => movie.userRating !== null)
+      .map((movie) => movie.userRating as number)
+  ).toFixed(2);
+  const avgRuntime = average(watched.map((movie) => movie.runtime)).toFixed(2);
 
   return (
     <div className="summary">

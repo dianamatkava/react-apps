@@ -5,18 +5,28 @@ export interface MovieModel {
   Year: string;
 }
 
-export interface Watched extends MovieModel {
+export interface WatchedMovieModel extends MovieModel {
   imdbRating: number;
-  userRating: number;
+  userRating: number | null;
   runtime: number;
 }
 
 export interface MovieInfoModel extends MovieModel {
-  released: string;
-  runtime: string;
-  genre: string;
+  Actors: string;
+  Awards: string;
+  Country: string;
+  Director: string;
+  Plot: string;
+  Genre: string;
+  Language: string;
+  Metascore: string;
+  Ratings: string[];
+  Released: string;
+  Runtime: string;
+  Writer: string;
+  Website: string;
   imdbRating: string;
-  plot: string;
-  actors: string[];
-  director: string;
+  imdbVotes: string;
 }
+
+

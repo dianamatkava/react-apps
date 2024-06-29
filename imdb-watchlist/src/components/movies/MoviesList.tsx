@@ -9,7 +9,7 @@ interface MovieListProps {
 
 const MovieList: React.FC<MovieListProps> = ({ movies, onSelectMovie }) => {
   return (
-    <ul className="list">
+    <ul className="list list-movies">
       {movies?.map((movie: MovieModel) => (
         <Movie movie={movie} onSelectMovie={onSelectMovie} />
       ))}

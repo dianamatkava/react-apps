@@ -1,11 +1,12 @@
 import React from "react";
-import { Watched } from "../../interfaces/Movie";
+import { WatchedMovieModel } from "../../interfaces/Movie";
 
 interface WatchedMovieProps {
-  movie: Watched;
+  movie: WatchedMovieModel;
+  onRemoveWatched: (movieId: string) => void;
 }
 
-const WhatchedMovie: React.FC<WatchedMovieProps> = ({ movie }) => {
+const WhatchedMovie: React.FC<WatchedMovieProps> = ({ movie, onRemoveWatched }) => {
   return (
     <li key={movie.imdbID}>
       <img src={movie.Poster} alt={`${movie.Title} poster`} />
@@ -23,6 +24,9 @@ const WhatchedMovie: React.FC<WatchedMovieProps> = ({ movie }) => {
           <span>⏳</span>
           <span>{movie.runtime} min</span>
         </p>
+        <button className="btn-delete" onClick={() => onRemoveWatched(movie.imdbID)}>
+          x
+        </button>
       </div>
     </li>
   );

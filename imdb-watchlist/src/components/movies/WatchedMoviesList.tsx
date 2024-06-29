@@ -1,16 +1,17 @@
 import React from "react";
 import WatchedMovie from "./WatchedMovie";
-import { Watched } from "../../interfaces/Movie";
+import { WatchedMovieModel } from "../../interfaces/Movie";
 
 interface MovieListProps {
-  watched: Watched[];
+  watched: WatchedMovieModel[];
+  onRemoveWatched: (movieId: string) => void;
 }
 
-const WatchedMoviesList: React.FC<MovieListProps> = ({ watched }) => {
+const WatchedMoviesList: React.FC<MovieListProps> = ({ watched, onRemoveWatched}) => {
   return (
     <ul className="list">
       {watched.map((movie) => (
-        <WatchedMovie movie={movie} />
+        <WatchedMovie movie={movie} onRemoveWatched={onRemoveWatched}/>
       ))}
     </ul>
   );

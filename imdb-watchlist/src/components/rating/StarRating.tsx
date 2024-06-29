@@ -12,6 +12,7 @@ interface StarRatingProds {
   maxStarts?: number;
   color?: string;
   size?: number;
+  userRating?: number | null;
   setRating: (val: number) => void;
 }
 
@@ -20,6 +21,7 @@ const StarRating: React.FC<StarRatingProds> = ({
   color = "red",
   size = 48,
   setRating,
+  userRating= 0,
 }) => {
   const textStyle = {
     lineHeight: 1,
@@ -27,7 +29,7 @@ const StarRating: React.FC<StarRatingProds> = ({
     color: color,
     fontSize: `${size / 1.5}px`,
   };
-  const [currentRating, setCurrentRating] = useState(0);
+  const [currentRating, setCurrentRating] = useState(userRating || 0);
   const [tempRating, setTempRating] = useState(currentRating);
 
   function handleRating(val: number) {
