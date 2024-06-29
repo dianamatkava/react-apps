@@ -67,6 +67,7 @@ function App() {
         {selectedFriend && (
           <div className="row">
             <BillForm
+              key={selectedFriend.id}
               selectedFriend={selectedFriend}
               setSelectedFriend={(el) => setSelectedFriend(el)}
               updateFriend={(id, balance) => updateFriendBalance(id, balance)}

@@ -1,5 +1,5 @@
-import { useState } from "react";
-
+import { useEffect, useState } from "react";
+import "./App.css";
 import Header from "./components/header/Header";
 import Main from "./components/Main";
 import WatchedMoviesList from "./components/movies/WatchedMoviesList";
@@ -8,7 +8,9 @@ import Logo from "./components/utils/Logo";
 import Search from "./components/utils/Search";
 import BoxContainer from "./components/utils/BoxContainer";
 import SearchResults from "./components/header/SearchResults";
-import Summary from "./components/movies/Summary";
+import WatchedSummary from "./components/movies/WatchedSummary";
+import { MovieModel } from "./interfaces/Movie";
+import MovieInfo from "./components/movies/MovieInfo";
 
 const tempMovieData = [
   {
@@ -57,9 +59,73 @@ const tempWatchedData = [
   },
 ];
 
+const API_KEY = "e6b9a25e";
+
+interface IMDBSearchResult {
+  Search: MovieModel[];
+}
+
+function Loader() {
+  return (
+    <div className="loader">
+      <div className="loader-inner ball-pulse">
+        <p>Loading ... </p>
+      </div>
+    </div>
+  );
+}
+
+function ErrorMessage({ message }: { message: string }) {
+  return (
+    <div className="error">
+      <div className="loader-inner ball-pulse">
+        <p>ERROR: {message} </p>
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   const [movies, setMovies] = useState(tempMovieData);
   const [watched, setWatched] = useState(tempWatchedData);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string>();
+  const [selectedMovie, setSelectedMovie] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchMovies() {
+      try {
+        setIsLoading(true);
+        const res = await fetch(
+          "http://www.omdbapi.com/?apikey=e6b9a25e&s=Interstellar"
+        );
+        if (!res.ok) {
+          throw new Error("Fetching movies failed");
+        }
+        const data: IMDBSearchResult = await res.json();
+        setMovies(data.Search);
+        setIsLoading(false);
+      } catch (err) {
+        console.error(err);
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("An unknown error occurred");
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchMovies();
+  }, []);
+
+  function onSelectMovie(id: string) {
+    setSelectedMovie((val) => (id === val ? null : id));
+  }
+
+  function onCloseSelectedMovie() {
+    setSelectedMovie(null);
+  }
 
   return (
     <>
@@ -72,14 +138,29 @@ export default function App() {
       </Header>
       <Main>
         <>
-          <BoxContainer>
-            <MovieList movies={movies} />
-          </BoxContainer>
+          <p>selectedMovie {selectedMovie}</p>
           <BoxContainer>
             <>
-              <Summary watched={watched} />
-              <WatchedMoviesList watched={watched}></WatchedMoviesList>
+              {isLoading && <Loader />}
+              {!isLoading && !error && (
+                <MovieList movies={movies} onSelectMovie={onSelectMovie} />
+              )}
+              {error && <ErrorMessage message={error} />}
             </>
+          </BoxContainer>
+
+          <BoxContainer>
+            {selectedMovie ? (
+              <MovieInfo
+                movieId={selectedMovie}
+                onCloseSelectedMovie={onCloseSelectedMovie}
+              />
+            ) : (
+              <>
+                <WatchedSummary watched={watched} />
+                <WatchedMoviesList watched={watched}></WatchedMoviesList>
+              </>
+            )}
           </BoxContainer>
         </>
       </Main>

@@ -5,7 +5,7 @@ interface SummaryProps {
   watched: Watched[];
 }
 
-const Summary: React.FC<SummaryProps> = ({ watched }) => {
+const WatchedSummary: React.FC<SummaryProps> = ({ watched }) => {
   const average = (arr: number[]) =>
     arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
@@ -38,4 +38,4 @@ const Summary: React.FC<SummaryProps> = ({ watched }) => {
   );
 };
 
-export default Summary;
+export default WatchedSummary;

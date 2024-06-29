@@ -10,3 +10,13 @@ export interface Watched extends MovieModel {
   userRating: number;
   runtime: number;
 }
+
+export interface MovieInfoModel extends MovieModel {
+  released: string;
+  runtime: string;
+  genre: string;
+  imdbRating: string;
+  plot: string;
+  actors: string[];
+  director: string;
+}
