@@ -83,11 +83,15 @@ export default function App() {
   }
 
   useEffect(() => {
+    const controller = new AbortController();
+
     async function fetchMovies() {
       try {
         setIsLoading(true);
+        setError("")
+
         const res = await fetch(
-          "http://www.omdbapi.com/?apikey=e6b9a25e&s=Interstellar"
+          "http://www.omdbapi.com/?apikey=e6b9a25e&s=Interstellar", {signal: controller.signal}
         );
         if (!res.ok) {
           throw new Error("Fetching movies failed");
@@ -98,12 +102,18 @@ export default function App() {
       } catch (err) {
         console.error(err);
         if (err instanceof Error) {
-          setError(err.message);
+          if (err.name !== "AbortError") {
+            setError(err.message);
+          }
         } else {
           setError("An unknown error occurred");
         }
       } finally {
         setIsLoading(false);
+      }
+
+      return () => {
+        controller.abort();
       }
     }
     fetchMovies();

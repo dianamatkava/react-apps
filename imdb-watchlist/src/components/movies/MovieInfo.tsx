@@ -45,8 +45,15 @@ const MovieInfo: React.FC<MovieInfoProps> = ({
     getMovieInfo(movieId);
   }, [movieId]);
 
+  useEffect(() => {
+    if (!movie?.Title) return;
+    document.title = `Movie | ${movie.Title}`;
+    return function () {
+      document.title = `imdbWatchList`;
+    }
+  }, [movie]);
+
   function onAddMovie() {
-    console.log(movie)
     if (!movie) {
       return;
     }
