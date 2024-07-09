@@ -22,7 +22,7 @@ const MovieInfo: React.FC<MovieInfoProps> = ({
   const [movie, setMovie] = useState<MovieInfoModel | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [userRating, setUserRating] = useState<number|null>(null);
-  const isWatched = watchedMovies.map(movie=> movie.imdbID).includes(movieId)
+  const isWatched = watchedMovies.map(movie=> movie.imdbID).includes(movieId);
 
   useEffect(() => {
     async function getMovieInfo(movieId: string) {
@@ -52,6 +52,19 @@ const MovieInfo: React.FC<MovieInfoProps> = ({
       document.title = `imdbWatchList`;
     }
   }, [movie]);
+
+  useEffect(() => {
+    function callback (e: KeyboardEvent) {
+      if (e.code === 'Escape') {
+        onCloseSelectedMovie()
+      }
+    }
+    document.addEventListener('keydown', callback);
+
+    return () => {
+      document.removeEventListener('keydown', callback);
+    }
+  }, [onCloseSelectedMovie]);
 
   function onAddMovie() {
     if (!movie) {

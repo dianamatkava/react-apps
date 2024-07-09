@@ -14,53 +14,6 @@ import Loader from "./components/utils/Loader";
 import ErrorMessage from "./components/utils/ErrorMessage";
 import MovieInfo from "./components/movies/MovieInfo";
 
-const tempMovieData = [
-  {
-    imdbID: "tt1375666",
-    Title: "Inception",
-    Year: "2010",
-    Poster:
-      "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg",
-  },
-  {
-    imdbID: "tt0133093",
-    Title: "The Matrix",
-    Year: "1999",
-    Poster:
-      "https://m.media-amazon.com/images/M/MV5BNzQzOTk3OTAtNDQ0Zi00ZTVkLWI0MTEtMDllZjNkYzNjNTc4L2ltYWdlXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg",
-  },
-  {
-    imdbID: "tt6751668",
-    Title: "Parasite",
-    Year: "2019",
-    Poster:
-      "https://m.media-amazon.com/images/M/MV5BYWZjMjk3ZTItODQ2ZC00NTY5LWE0ZDYtZTI3MjcwN2Q5NTVkXkEyXkFqcGdeQXVyODk4OTc3MTY@._V1_SX300.jpg",
-  },
-];
-
-const tempWatchedData: WatchedMovieModel[] = [
-  {
-    imdbID: "tt1375666",
-    Title: "Inception",
-    Year: "2010",
-    Poster:
-      "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg",
-    runtime: 148,
-    imdbRating: 8.8,
-    userRating: 10,
-  },
-  {
-    imdbID: "tt0088763",
-    Title: "Back to the Future",
-    Year: "1985",
-    Poster:
-      "https://m.media-amazon.com/images/M/MV5BZmU0M2Y1OGUtZjIxNi00ZjBkLTg1MjgtOWIyNThiZWIwYjRiXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg",
-    runtime: 116,
-    imdbRating: 8.5,
-    userRating: 9,
-  },
-];
-
 
 interface IMDBSearchResult {
   Search: MovieModel[];
@@ -68,11 +21,12 @@ interface IMDBSearchResult {
 
 
 export default function App() {
-  const [movies, setMovies] = useState(tempMovieData);
-  const [watched, setWatched] = useState(tempWatchedData);
+  const [movies, setMovies] = useState<MovieModel[]>([]);
+  const [watched, setWatched] = useState<WatchedMovieModel[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>();
   const [selectedMovie, setSelectedMovie] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
 
   function handleAddWatchedMovie(movie: WatchedMovieModel) {
     setWatched((watchedMovies) => watchedMovies.concat(movie));
@@ -91,16 +45,16 @@ export default function App() {
         setError("")
 
         const res = await fetch(
-          "http://www.omdbapi.com/?apikey=e6b9a25e&s=Interstellar", {signal: controller.signal}
+          `http://www.omdbapi.com/?apikey=e6b9a25e&s=${search}`, {signal: controller.signal}
         );
         if (!res.ok) {
           throw new Error("Fetching movies failed");
         }
         const data: IMDBSearchResult = await res.json();
+
         setMovies(data.Search);
         setIsLoading(false);
       } catch (err) {
-        console.error(err);
         if (err instanceof Error) {
           if (err.name !== "AbortError") {
             setError(err.message);
@@ -111,13 +65,15 @@ export default function App() {
       } finally {
         setIsLoading(false);
       }
+    }
 
-      return () => {
+    fetchMovies();
+
+    return () => {
+        console.log('aborted')
         controller.abort();
       }
-    }
-    fetchMovies();
-  }, []);
+  }, [search]);
 
   function onSelectMovie(id: string) {
     setSelectedMovie((val) => (id === val ? null : id));
@@ -132,7 +88,7 @@ export default function App() {
       <Header>
         <>
           <Logo />
-          <Search />
+          <Search setSearch={setSearch} search={search}/>
           <SearchResults movies={movies} />
         </>
       </Header>
