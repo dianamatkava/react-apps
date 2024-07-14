@@ -70,7 +70,6 @@ export default function App() {
     fetchMovies();
 
     return () => {
-        console.log('aborted')
         controller.abort();
       }
   }, [search]);
