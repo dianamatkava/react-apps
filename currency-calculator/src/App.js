@@ -31,10 +31,18 @@ export default function App() {
       }
     }
 
+    if (fromCurr === toCurr) {
+      setLoading(false);
+      setResult(0);
+      return
+    }
+
     callback();
 
+
+
     return () => {
-      controller.abort((reason = "AbortError"));
+      controller.abort("AbortError");
     };
   }, [amount, fromCurr, toCurr]);
 
@@ -45,19 +53,19 @@ export default function App() {
         value={amount}
         onChange={(e) => setAmount(e.target.value)}
       />
-      <select onChange={(e) => setFromCurr(e.target.value)}>
+      <select onChange={(e) => setFromCurr(e.target.value)} disabled={loading}>
         <option value="USD">USD</option>
         <option value="EUR">EUR</option>
         <option value="CAD">CAD</option>
         <option value="INR">INR</option>
       </select>
-      <select onChange={(e) => setToCurr(e.target.value)}>
+      <select onChange={(e) => setToCurr(e.target.value)} disabled={loading}>
         <option value="EUR">EUR</option>
         <option value="CAD">CAD</option>
         <option value="INR">INR</option>
         <option value="USD">USD</option>
       </select>
-      {loading ? <p>Loading</p> : <p>{result}</p>}
+      {loading ? <p>Loading</p> : <p>{result} {toCurr}</p>}
     </div>
   );
 }
