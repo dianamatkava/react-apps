@@ -26,7 +26,7 @@ A todo-like app designed for creating packing lists for upcoming travels. Featur
 - Management of form state using useState
 - Component Composition
 
-![Splitwise Preview](./.assets/faq.gif)
+<img src="./.assets/faq.gif" width="400px"/>
 
 ## Steps Component
 
