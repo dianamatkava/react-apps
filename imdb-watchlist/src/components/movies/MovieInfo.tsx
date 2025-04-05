@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import {MovieInfoModel, WatchedMovieModel} from "../../interfaces/Movie";
+import React, { useEffect, useRef, useState } from "react";
+import { MovieInfoModel, WatchedMovieModel } from "../../interfaces/Movie";
 import StarRating from "../rating/StarRating";
 import Loader from "../utils/Loader";
-
+import useKey from "../../hook/useKey";
 
 interface MovieInfoProps {
   movieId: string;
@@ -21,15 +21,27 @@ const MovieInfo: React.FC<MovieInfoProps> = ({
 }) => {
   const [movie, setMovie] = useState<MovieInfoModel | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [userRating, setUserRating] = useState<number|null>(null);
-  const isWatched = watchedMovies.map(movie=> movie.imdbID).includes(movieId);
+  const [userRating, setUserRating] = useState<number | null>(null);
+
+  const countRef = useRef(0);
+
+  useEffect(() => {
+    if (userRating) {
+      // to avoid setting count on first render
+      countRef.current++;
+    }
+  }, [userRating]);
+
+  const isWatched = watchedMovies
+    .map((movie) => movie.imdbID)
+    .includes(movieId);
 
   useEffect(() => {
     async function getMovieInfo(movieId: string) {
       setIsLoading(true);
 
       const res = await fetch(
-        `http://www.omdbapi.com/?apikey=e6b9a25e&i=${movieId}`
+        `http://www.omdbapi.com/?apikey=e6b9a25e&i=${movieId}`,
       );
       if (!res.ok) {
         throw new Error("Fetching movie failed");
@@ -37,10 +49,12 @@ const MovieInfo: React.FC<MovieInfoProps> = ({
       const data: MovieInfoModel = await res.json();
       setMovie(data);
 
-     const watchedMovie = watchedMovies.filter((movie) => movie.imdbID === movieId).at(0);
-     setUserRating(watchedMovie?.userRating || null);
+      const watchedMovie = watchedMovies
+        .filter((movie) => movie.imdbID === movieId)
+        .at(0);
+      setUserRating(watchedMovie?.userRating || null);
 
-     setIsLoading(false);
+      setIsLoading(false);
     }
     getMovieInfo(movieId);
   }, [movieId]);
@@ -50,21 +64,10 @@ const MovieInfo: React.FC<MovieInfoProps> = ({
     document.title = `Movie | ${movie.Title}`;
     return function () {
       document.title = `imdbWatchList`;
-    }
+    };
   }, [movie]);
 
-  useEffect(() => {
-    function callback (e: KeyboardEvent) {
-      if (e.code === 'Escape') {
-        onCloseSelectedMovie()
-      }
-    }
-    document.addEventListener('keydown', callback);
-
-    return () => {
-      document.removeEventListener('keydown', callback);
-    }
-  }, [onCloseSelectedMovie]);
+  useKey({ key: "Escape", callback: onCloseSelectedMovie });
 
   function onAddMovie() {
     if (!movie) {
@@ -77,7 +80,8 @@ const MovieInfo: React.FC<MovieInfoProps> = ({
       Year: movie.Year,
       imdbRating: Number(movie.imdbRating),
       userRating: userRating,
-      runtime: Number(movie.Runtime.split(' ').at(0)),
+      runtime: Number(movie.Runtime.split(" ").at(0)),
+      countRatings: countRef.current,
     };
 
     onAddWatched(newWatchedMovie);
@@ -89,13 +93,12 @@ const MovieInfo: React.FC<MovieInfoProps> = ({
     onCloseSelectedMovie();
   }
 
-
   if (!movie) {
     return null;
   }
 
   if (isLoading) {
-    return <Loader/>;
+    return <Loader />;
   }
 
   return (
@@ -124,11 +127,15 @@ const MovieInfo: React.FC<MovieInfoProps> = ({
             size={28}
             userRating={userRating}
           />
-          {isWatched ?
-            <button className='btn-remove' onClick={onRemoveMovie}>- Remove from Watchlist</button> :
-            <button className='btn-add' onClick={onAddMovie}>+ Add to Watchlist</button>
-          }
-
+          {isWatched ? (
+            <button className="btn-remove" onClick={onRemoveMovie}>
+              - Remove from Watchlist
+            </button>
+          ) : (
+            <button className="btn-add" onClick={onAddMovie}>
+              + Add to Watchlist
+            </button>
+          )}
         </div>
         <p>
           <em>{movie.Plot}</em>

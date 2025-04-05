@@ -9,70 +9,33 @@ import Search from "./components/utils/Search";
 import BoxContainer from "./components/utils/BoxContainer";
 import SearchResults from "./components/header/SearchResults";
 import WatchedSummary from "./components/movies/WatchedSummary";
-import {MovieModel, WatchedMovieModel} from "./interfaces/Movie";
+import { WatchedMovieModel } from "./interfaces/Movie";
 import Loader from "./components/utils/Loader";
 import ErrorMessage from "./components/utils/ErrorMessage";
 import MovieInfo from "./components/movies/MovieInfo";
-
-
-interface IMDBSearchResult {
-  Search: MovieModel[];
-}
-
+import useMovies from "./hook/useMovies";
+import useLocalStorageState from "./hook/useLocalStorageState";
 
 export default function App() {
-  const [movies, setMovies] = useState<MovieModel[]>([]);
-  const [watched, setWatched] = useState<WatchedMovieModel[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string>();
+  const [watched, setWatched] = useLocalStorageState<WatchedMovieModel[]>({
+    key: "watchedMovies",
+    initial: [],
+  });
+
   const [selectedMovie, setSelectedMovie] = useState<string | null>(null);
   const [search, setSearch] = useState("");
+  const { error, isLoading, movies } = useMovies({ search: search });
 
   function handleAddWatchedMovie(movie: WatchedMovieModel) {
     setWatched((watchedMovies) => watchedMovies.concat(movie));
+    // localStorage.setItem("watched", JSON.stringify([...watched, movie]));
   }
 
   function handleRemoveWatchedMovie(movieId: string) {
-    setWatched((watchedMovies) => watchedMovies.filter((movie) => movie.imdbID !== movieId));
+    setWatched((watchedMovies) =>
+      watchedMovies.filter((movie) => movie.imdbID !== movieId),
+    );
   }
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    async function fetchMovies() {
-      try {
-        setIsLoading(true);
-        setError("")
-
-        const res = await fetch(
-          `http://www.omdbapi.com/?apikey=e6b9a25e&s=${search}`, {signal: controller.signal}
-        );
-        if (!res.ok) {
-          throw new Error("Fetching movies failed");
-        }
-        const data: IMDBSearchResult = await res.json();
-
-        setMovies(data.Search);
-        setIsLoading(false);
-      } catch (err) {
-        if (err instanceof Error) {
-          if (err.name !== "AbortError") {
-            setError(err.message);
-          }
-        } else {
-          setError("An unknown error occurred");
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    fetchMovies();
-
-    return () => {
-        controller.abort();
-      }
-  }, [search]);
 
   function onSelectMovie(id: string) {
     setSelectedMovie((val) => (id === val ? null : id));
@@ -87,7 +50,7 @@ export default function App() {
       <Header>
         <>
           <Logo />
-          <Search setSearch={setSearch} search={search}/>
+          <Search setSearch={setSearch} search={search} />
           <SearchResults movies={movies} />
         </>
       </Header>
@@ -115,7 +78,10 @@ export default function App() {
             ) : (
               <>
                 <WatchedSummary watched={watched} />
-                <WatchedMoviesList watched={watched} onRemoveWatched={handleRemoveWatchedMovie}></WatchedMoviesList>
+                <WatchedMoviesList
+                  watched={watched}
+                  onRemoveWatched={handleRemoveWatchedMovie}
+                ></WatchedMoviesList>
               </>
             )}
           </BoxContainer>

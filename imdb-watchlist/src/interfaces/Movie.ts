@@ -9,6 +9,7 @@ export interface WatchedMovieModel extends MovieModel {
   imdbRating: number;
   userRating: number | null;
   runtime: number;
+  countRatings: number;
 }
 
 export interface MovieInfoModel extends MovieModel {
@@ -25,8 +26,6 @@ export interface MovieInfoModel extends MovieModel {
   Runtime: string;
   Writer: string;
   Website: string;
-  imdbRating: string;
+  imdbRating: number;
   imdbVotes: string;
 }
-
-
